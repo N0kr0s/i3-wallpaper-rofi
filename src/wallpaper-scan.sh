@@ -1,0 +1,51 @@
+#!/bin/bash
+
+CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
+
+[ -f "$CONFIG" ] || {
+    echo "Config not found:"
+    echo "$CONFIG"
+    exit 1
+}
+
+source "$CONFIG"
+
+find_files() {
+
+    local type="$1"
+    shift
+
+    for dir in "$@"; do
+
+        [ -d "$dir" ] || continue
+
+        if [ "$type" = image ]; then
+
+            find "$dir" -maxdepth 1 -type f \
+                \( \
+                -iname "*.png" \
+                -o -iname "*.jpg" \
+                -o -iname "*.jpeg" \
+                -o -iname "*.webp" \
+                \)
+
+        else
+
+            find "$dir" -maxdepth 1 -type f \
+                \( \
+                -iname "*.mp4" \
+                -o -iname "*.webm" \
+                -o -iname "*.mkv" \
+                \)
+
+        fi
+
+    done
+
+}
+
+find_files image "${IMAGE_DIRS[@]}" \
+| sed 's/^/image|/'
+
+find_files video "${VIDEO_DIRS[@]}" \
+| sed 's/^/video|/'

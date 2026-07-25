@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Wallpaper
+Comment=Wallpaper selector
+Exec=wallpaper-menu-run
+Icon=preferences-desktop-wallpaper
+Terminal=false
+Categories=Utility;

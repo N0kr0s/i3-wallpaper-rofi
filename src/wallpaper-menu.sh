@@ -1,0 +1,79 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
+
+SCAN="$SCRIPT_DIR/wallpaper-scan.sh"
+
+[ -f "$CONFIG" ] || {
+    echo "Config not found:"
+    echo "$CONFIG"
+    exit 1
+}
+
+source "$CONFIG"
+
+declare -a FILES
+declare -a MENU
+
+
+counter=0
+
+while IFS="|" read -r type path; do
+
+    FILES[$counter]="$type|$path"
+
+    name=$(basename "$path")
+    name="${name%.*}"
+
+    # заменяем - и _
+    name=$(echo "$name" | sed 's/[-_]/ /g')
+
+    if [ "$SHOW_ICONS" = true ]; then
+
+        if [ "$type" = "image" ]; then
+            MENU[$counter]="$IMAGE_ICON$name"
+        else
+            MENU[$counter]="$VIDEO_ICON$name"
+        fi
+
+    else
+
+        MENU[$counter]="$name"
+
+    fi
+
+    ((counter++))
+
+done < <("$SCAN")
+
+
+ROFI_ARGS=(
+    -dmenu
+    -i
+    -p "$ROFI_PROMPT"
+)
+
+[ -n "$ROFI_MESSAGE" ] && ROFI_ARGS+=(-mesg "$ROFI_MESSAGE")
+[ -n "$ROFI_THEME" ] && ROFI_ARGS+=(-theme "$ROFI_THEME")
+
+choice=$(
+    printf "%s\n" "${MENU[@]}" |
+    rofi "${ROFI_ARGS[@]}"
+)
+
+
+[ -z "$choice" ] && exit
+
+
+for i in "${!MENU[@]}"; do
+
+    if [ "${MENU[$i]}" = "$choice" ]; then
+
+        echo "${FILES[$i]}"
+        exit
+
+    fi
+
+done

@@ -1,0 +1,153 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+STATE_FILE="$HOME/.config/wallpaper.state"
+CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
+
+[ -f "$CONFIG" ] || {
+    echo "Config not found:"
+    echo "$CONFIG"
+    exit 1
+}
+
+source "$CONFIG"
+
+PREVIEW_DIR="$HOME/.local/share/wallpaper"
+PREVIEW="$PREVIEW_DIR/current.png"
+
+mkdir -p "$PREVIEW_DIR"
+
+update_preview() {
+    local type="$1"
+    local path="$2"
+
+    echo "Updating preview..."
+
+    if [ "$type" = "image" ]; then
+
+        convert "$path" \
+            -auto-orient \
+            "$PREVIEW"
+
+    else
+
+        ffmpeg -y \
+            -i "$path" \
+            -vf "thumbnail" \
+            -frames:v 1 \
+            "$PREVIEW" \
+            -loglevel error
+
+    fi
+}
+
+set_wallpaper() {
+
+    local line="$1"
+
+    [ -z "$line" ] && {
+        echo "No wallpaper selected"
+        exit 1
+    }
+
+    local type path
+
+    type="${line%%|*}"
+    path="${line#*|}"
+
+    [ ! -f "$path" ] && {
+        echo "File not found:"
+        echo "$path"
+        exit 1
+    }
+
+    case "$type" in
+
+        image)
+
+            echo "Setting IMAGE wallpaper"
+
+            pkill xwinwrap 2>/dev/null
+            pkill mpv 2>/dev/null
+
+            feh --bg-fill "$path"
+
+            ;;
+
+        video)
+
+            echo "Setting VIDEO wallpaper"
+
+            pkill xwinwrap 2>/dev/null
+            pkill mpv 2>/dev/null
+            pkill feh 2>/dev/null
+
+            "$VIDEO_SCRIPT" -a "$path" >/dev/null 2>&1 &
+
+            ;;
+
+        *)
+
+            echo "Unknown wallpaper type: $type"
+            exit 1
+
+            ;;
+
+    esac
+
+    update_preview "$type" "$path"
+
+    sudo "$SCRIPT_DIR/update-lightdm-wallpaper" "$PREVIEW"
+
+    echo "$line" > "$STATE_FILE"
+
+    echo "Done."
+
+}
+
+restore_wallpaper() {
+
+    if [ -f "$STATE_FILE" ]; then
+        set_wallpaper "$(cat "$STATE_FILE")"
+    else
+        echo "No saved wallpaper."
+    fi
+
+}
+
+list_wallpapers() {
+
+    nl -w2 -s'. ' "$LIST"
+
+}
+
+add_wallpaper() {
+
+    local type="$1"
+    local path="$2"
+
+    if [ -z "$type" ] || [ -z "$path" ]; then
+        echo "Usage:"
+        echo "wallpaper add <image|video> <path>"
+        exit 1
+    fi
+
+    echo "$type|$path" >> "$LIST"
+
+    echo "Added."
+
+}
+
+case "$1" in
+
+    restore)
+        restore_wallpaper
+        ;;
+
+
+    *)
+        set_wallpaper "$1"
+        ;;
+
+esac

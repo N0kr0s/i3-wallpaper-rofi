@@ -1,0 +1,25 @@
+# ~/.config/wallpaper/wallpaper.conf
+
+IMAGE_DIRS=(
+"$HOME/photos/wallpapers"
+)
+
+VIDEO_DIRS=(
+"$HOME/video"
+"$HOME/video/wallpapers"
+)
+
+VIDEO_SCRIPT="$HOME/programs/i3-video-wallpaper/setup.sh"
+
+SHOW_ICONS=true
+
+IMAGE_ICON="󰈟 "
+VIDEO_ICON="󰈈 "
+
+ROFI_THEME="gruvbox-dark"
+
+ROFI_PROMPT="Wallpaper"
+
+ROFI_MESSAGE="Select wallpaper"
+
+SORT_MODE="name"
