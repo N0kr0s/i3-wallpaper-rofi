@@ -7,6 +7,46 @@ PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 echo "== Wallpaper installer =="
 
 # ----------------------------
+# Dependencies
+# ----------------------------
+
+echo "[0/6] Checking dependencies..."
+
+require() {
+
+    if ! command -v "$1" >/dev/null 2>&1; then
+        echo
+        echo "Missing dependency: $1"
+        echo "Please install it and run install.sh again."
+        exit 1
+    fi
+
+}
+
+require feh
+require ffmpeg
+require convert
+require rofi
+require mpv
+require xrandr
+require xdotool
+require socat
+require pkill
+require install
+
+# xwinwrap
+if ! command -v xwinwrap >/dev/null 2>&1; then
+    echo
+    echo "Missing dependency: xwinwrap"
+    echo
+    echo "Install it from:"
+    echo "https://github.com/Zolyn/i3-video-wallpaper"
+    exit 1
+fi
+
+echo "All dependencies found."
+
+# ----------------------------
 # Install scripts
 # ----------------------------
 
@@ -26,6 +66,21 @@ sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-scan" \
 
 sudo install -Dm755 "$PROJECT_DIR/src/update-lightdm-wallpaper" \
     /usr/local/bin/update-lightdm-wallpaper
+
+# ----------------------------
+# i3-video-wallpaper
+# ----------------------------
+
+echo "[1.5/6] Installing video wallpaper engine..."
+
+if [ ! -f "$PROJECT_DIR/i3-video-wallpaper/setup.sh" ]; then
+    echo "ERROR: Missing i3-video-wallpaper/setup.sh"
+    exit 1
+fi
+
+sudo install -Dm755 \
+    "$PROJECT_DIR/i3-video-wallpaper/setup.sh" \
+    /usr/local/lib/i3-wallpaper-rofi/setup.sh
 
 # ----------------------------
 # Config

@@ -9,7 +9,7 @@ VIDEO_DIRS=(
 "$HOME/video/wallpapers"
 )
 
-VIDEO_SCRIPT="$HOME/programs/i3-video-wallpaper/setup.sh"
+VIDEO_SCRIPT="/usr/local/lib/i3-wallpaper-rofi/setup.sh"
 
 SHOW_ICONS=true
 
