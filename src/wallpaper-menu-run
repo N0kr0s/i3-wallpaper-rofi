@@ -2,8 +2,8 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-choice=$("$SCRIPT_DIR/wallpaper-menu.sh")
+choice=$("$SCRIPT_DIR/wallpaper-menu")
 
 [ -z "$choice" ] && exit
 
-"$SCRIPT_DIR/wallpaper.sh" "$choice"
+"$SCRIPT_DIR/wallpaper" "$choice"

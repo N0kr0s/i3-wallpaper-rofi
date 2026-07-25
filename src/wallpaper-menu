@@ -4,7 +4,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
 
-SCAN="$SCRIPT_DIR/wallpaper-scan.sh"
+SCAN="$SCRIPT_DIR/wallpaper-scan"
 
 [ -f "$CONFIG" ] || {
     echo "Config not found:"

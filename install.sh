@@ -15,13 +15,13 @@ echo "[1/6] Installing scripts..."
 sudo install -Dm755 "$PROJECT_DIR/src/wallpaper" \
     /usr/local/bin/wallpaper
 
-sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-menu.sh" \
+sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-menu" \
     /usr/local/bin/wallpaper-menu
 
-sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-menu-run.sh" \
+sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-menu-run" \
     /usr/local/bin/wallpaper-menu-run
 
-sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-scan.sh" \
+sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-scan" \
     /usr/local/bin/wallpaper-scan
 
 sudo install -Dm755 "$PROJECT_DIR/src/update-lightdm-wallpaper" \
