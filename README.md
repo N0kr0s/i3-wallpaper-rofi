@@ -19,6 +19,10 @@ A lightweight wallpaper manager for **i3wm** with a Rofi-based interface.
 * Simple installation and uninstallation scripts
 * Video wallpaper backend included as a Git submodule
 
+
+<img width="568" height="318" alt="lv_0_20260812021152" src="https://github.com/user-attachments/assets/74cef4e1-6d18-4417-9222-ff571d632aaa" />
+
+
 ## Requirements
 
 The following applications are required:
