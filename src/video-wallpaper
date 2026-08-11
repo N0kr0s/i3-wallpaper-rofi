@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+BACKEND="/usr/lib/i3-wallpaper-rofi/i3-video-wallpaper/setup.sh"
+
+if [ ! -x "$BACKEND" ]; then
+    echo "Error: i3-video-wallpaper backend not found:"
+    echo "$BACKEND"
+    exit 1
+fi
+
+exec "$BACKEND" "$@"

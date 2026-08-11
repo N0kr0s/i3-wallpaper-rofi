@@ -83,7 +83,13 @@ set_wallpaper() {
             pkill mpv 2>/dev/null
             pkill feh 2>/dev/null
 
-            "$VIDEO_SCRIPT" -a "$path" >/dev/null 2>&1 &
+            if [ ! -x "$VIDEO_BACKEND" ]; then
+                echo "Video wallpaper backend not found:"
+                echo "$VIDEO_BACKEND"
+                exit 1
+            fi
+
+            "$VIDEO_BACKEND" -a "$path" >/dev/null 2>&1 &
 
             ;;
 
