@@ -2,6 +2,12 @@
 
 set -e
 
+if [ "$EUID" -eq 0 ]; then
+    echo "Please run this script as your normal user, not with sudo."
+    echo "The script will ask for sudo when needed."
+    exit 1
+fi
+
 BIN_DIR="/usr/bin"
 LIB_DIR="/usr/lib/i3-wallpaper-rofi"
 
