@@ -41,11 +41,37 @@ find_files() {
         fi
 
     done
+}
+
+sort_files() {
+
+    case "$SORT_MODE" in
+
+        name)
+            sort -t/ -k2
+            ;;
+
+        path)
+            sort
+            ;;
+
+        none|"")
+            cat
+            ;;
+
+        *)
+            echo "Unknown SORT_MODE: $SORT_MODE" >&2
+            cat
+            ;;
+
+    esac
 
 }
 
 find_files image "${IMAGE_DIRS[@]}" \
+| sort_files \
 | sed 's/^/image|/'
 
 find_files video "${VIDEO_DIRS[@]}" \
+| sort_files \
 | sed 's/^/video|/'
