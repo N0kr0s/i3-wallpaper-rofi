@@ -1,0 +1,3 @@
+[submodule "vendor/i3-video-wallpaper"]
+	path = vendor/i3-video-wallpaper
+	url = https://github.com/Zolyn/i3-video-wallpaper.git
