@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Wallpaper Restore
-Exec=wallpaper restore
+Exec=/usr/bin/wallpaper restore
 Hidden=false
 NoDisplay=true
 X-GNOME-Autostart-enabled=true
