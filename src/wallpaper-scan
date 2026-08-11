@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
+CONFIG="$HOME/.config/i3-wallpaper-rofi/config"
 
 [ -f "$CONFIG" ] || {
     echo "Config not found:"

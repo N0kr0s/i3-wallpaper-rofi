@@ -4,23 +4,32 @@ set -e
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-echo "== Wallpaper installer =="
+BIN_DIR="/usr/bin"
+LIB_DIR="/usr/lib/i3-wallpaper-rofi"
 
-# ----------------------------
+CONFIG_DIR="$HOME/.config/i3-wallpaper-rofi"
+CONFIG_FILE="$CONFIG_DIR/config"
+
+APP_DIR="$HOME/.local/share/applications"
+AUTOSTART_DIR="$HOME/.config/autostart"
+
+SUDOERS_FILE="/etc/sudoers.d/i3-wallpaper-rofi"
+
+echo "== i3-wallpaper-rofi installer =="
+
+# --------------------------------------------------
 # Dependencies
-# ----------------------------
+# --------------------------------------------------
 
-echo "[0/6] Checking dependencies..."
+echo "[1/6] Checking dependencies..."
 
 require() {
-
     if ! command -v "$1" >/dev/null 2>&1; then
         echo
         echo "Missing dependency: $1"
         echo "Please install it and run install.sh again."
         exit 1
     fi
-
 }
 
 require feh
@@ -34,116 +43,136 @@ require socat
 require pkill
 require install
 
-# xwinwrap
 if ! command -v xwinwrap >/dev/null 2>&1; then
     echo
     echo "Missing dependency: xwinwrap"
     echo
-    echo "Install it from:"
+    echo "xwinwrap is required by i3-video-wallpaper."
+    echo "See:"
     echo "https://github.com/Zolyn/i3-video-wallpaper"
     exit 1
 fi
 
 echo "All dependencies found."
 
-# ----------------------------
-# Install scripts
-# ----------------------------
+# --------------------------------------------------
+# Install main scripts
+# --------------------------------------------------
 
-echo "[1/6] Installing scripts..."
+echo "[2/6] Installing scripts..."
 
-sudo install -Dm755 "$PROJECT_DIR/src/wallpaper" \
-    /usr/local/bin/wallpaper
+sudo install -Dm755 \
+    "$PROJECT_DIR/src/wallpaper" \
+    "$BIN_DIR/wallpaper"
 
-sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-menu" \
-    /usr/local/bin/wallpaper-menu
+sudo install -Dm755 \
+    "$PROJECT_DIR/src/wallpaper-menu-run" \
+    "$BIN_DIR/wallpaper-menu-run"
 
-sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-menu-run" \
-    /usr/local/bin/wallpaper-menu-run
+sudo install -Dm755 \
+    "$PROJECT_DIR/src/wallpaper-menu" \
+    "$LIB_DIR/wallpaper-menu"
 
-sudo install -Dm755 "$PROJECT_DIR/src/wallpaper-scan" \
-    /usr/local/bin/wallpaper-scan
+sudo install -Dm755 \
+    "$PROJECT_DIR/src/wallpaper-scan" \
+    "$LIB_DIR/wallpaper-scan"
 
-sudo install -Dm755 "$PROJECT_DIR/src/update-lightdm-wallpaper" \
-    /usr/local/bin/update-lightdm-wallpaper
+sudo install -Dm755 \
+    "$PROJECT_DIR/src/video-wallpaper" \
+    "$LIB_DIR/video-wallpaper"
 
-# ----------------------------
-# i3-video-wallpaper
-# ----------------------------
+sudo install -Dm755 \
+    "$PROJECT_DIR/src/update-lightdm-wallpaper" \
+    "$LIB_DIR/update-lightdm-wallpaper"
 
-echo "[1.5/6] Installing video wallpaper engine..."
+# --------------------------------------------------
+# Install i3-video-wallpaper
+# --------------------------------------------------
 
-if [ ! -f "$PROJECT_DIR/i3-video-wallpaper/setup.sh" ]; then
-    echo "ERROR: Missing i3-video-wallpaper/setup.sh"
+echo "[3/6] Installing video wallpaper backend..."
+
+VIDEO_BACKEND="$PROJECT_DIR/vendor/i3-video-wallpaper"
+
+if [ ! -x "$VIDEO_BACKEND/setup.sh" ]; then
+    echo
+    echo "ERROR: i3-video-wallpaper submodule is missing."
+    echo
+    echo "Initialize it with:"
+    echo
+    echo "    git submodule update --init --recursive"
+    echo
     exit 1
 fi
 
+sudo install -d "$LIB_DIR/i3-video-wallpaper"
+
 sudo install -Dm755 \
-    "$PROJECT_DIR/i3-video-wallpaper/setup.sh" \
-    /usr/local/lib/i3-wallpaper-rofi/setup.sh
+    "$VIDEO_BACKEND/setup.sh" \
+    "$LIB_DIR/i3-video-wallpaper/setup.sh"
 
-# ----------------------------
-# Config
-# ----------------------------
+sudo install -Dm644 \
+    "$VIDEO_BACKEND/LICENSE" \
+    "$LIB_DIR/i3-video-wallpaper/LICENSE"
 
-echo "[2/6] Installing config..."
+sudo install -Dm644 \
+    "$VIDEO_BACKEND/README.md" \
+    "$LIB_DIR/i3-video-wallpaper/README.md"
 
-mkdir -p "$HOME/.config/wallpaper"
+# --------------------------------------------------
+# Configuration
+# --------------------------------------------------
 
-if [ ! -f "$HOME/.config/wallpaper/wallpaper.conf" ]; then
+echo "[4/6] Installing configuration..."
 
+mkdir -p "$CONFIG_DIR"
+
+if [ ! -f "$CONFIG_FILE" ]; then
     cp \
-        "$PROJECT_DIR/config/wallpaper.conf.example" \
-        "$HOME/.config/wallpaper/wallpaper.conf"
+        "$PROJECT_DIR/config/config.example" \
+        "$CONFIG_FILE"
 
-    echo "Config created."
-
+    echo "Config created:"
+    echo "  $CONFIG_FILE"
 else
-
-    echo "Config already exists."
-
+    echo "Config already exists, keeping it."
 fi
 
-# ----------------------------
-# Desktop entry
-# ----------------------------
+# --------------------------------------------------
+# Desktop integration
+# --------------------------------------------------
 
-echo "[3/6] Installing desktop entry..."
+echo "[5/6] Installing desktop integration..."
 
-mkdir -p "$HOME/.local/share/applications"
+mkdir -p "$APP_DIR"
+mkdir -p "$AUTOSTART_DIR"
 
-cp \
+install -Dm644 \
     "$PROJECT_DIR/desktop/wallpaper.desktop" \
-    "$HOME/.local/share/applications/"
+    "$APP_DIR/wallpaper.desktop"
 
-# ----------------------------
-# Autostart
-# ----------------------------
-
-echo "[4/6] Installing autostart..."
-
-mkdir -p "$HOME/.config/autostart"
-
-cp \
+install -Dm644 \
     "$PROJECT_DIR/desktop/wallpaper-autostart.desktop" \
-    "$HOME/.config/autostart/"
+    "$AUTOSTART_DIR/wallpaper-autostart.desktop"
 
-# ----------------------------
+# --------------------------------------------------
 # sudoers
-# ----------------------------
+# --------------------------------------------------
 
-echo "[5/6] Installing sudo rule..."
+echo "[6/6] Configuring LightDM wallpaper permissions..."
 
-echo "$USER ALL=(root) NOPASSWD: /usr/local/bin/update-lightdm-wallpaper" |
-sudo tee /etc/sudoers.d/wallpaper >/dev/null
+echo "$USER ALL=(root) NOPASSWD: $LIB_DIR/update-lightdm-wallpaper" |
+    sudo tee "$SUDOERS_FILE" >/dev/null
 
-sudo chmod 440 /etc/sudoers.d/wallpaper
-
-# ----------------------------
-# Finish
-# ----------------------------
-
-echo "[6/6] Done."
+sudo chmod 440 "$SUDOERS_FILE"
 
 echo
-echo "Wallpaper installed successfully."
+echo "======================================"
+echo " i3-wallpaper-rofi installed!"
+echo "======================================"
+echo
+echo "Config:"
+echo "  $CONFIG_FILE"
+echo
+echo "Run:"
+echo "  wallpaper-menu-run"
+echo

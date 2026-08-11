@@ -1,9 +1,13 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="$HOME/.config/i3-wallpaper-rofi"
+CONFIG="$CONFIG_DIR/config"
 
-STATE_FILE="$HOME/.config/wallpaper.state"
-CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
+STATE_DIR="$HOME/.local/state/i3-wallpaper-rofi"
+STATE_FILE="$STATE_DIR/wallpaper"
+
+PREVIEW_DIR="$HOME/.local/share/i3-wallpaper-rofi"
+PREVIEW="$PREVIEW_DIR/current.png"
 
 [ -f "$CONFIG" ] || {
     echo "Config not found:"
@@ -13,10 +17,7 @@ CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
 
 source "$CONFIG"
 
-PREVIEW_DIR="$HOME/.local/share/wallpaper"
-PREVIEW="$PREVIEW_DIR/current.png"
-
-mkdir -p "$PREVIEW_DIR"
+mkdir -p "$STATE_DIR" "$PREVIEW_DIR"
 
 update_preview() {
     local type="$1"
@@ -104,7 +105,7 @@ set_wallpaper() {
 
     update_preview "$type" "$path"
 
-    sudo "$SCRIPT_DIR/update-lightdm-wallpaper" "$PREVIEW"
+    sudo /usr/lib/i3-wallpaper-rofi/update-lightdm-wallpaper "$PREVIEW"
 
     echo "$line" > "$STATE_FILE"
 

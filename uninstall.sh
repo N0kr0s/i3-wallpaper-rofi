@@ -2,28 +2,48 @@
 
 set -e
 
-echo "== Wallpaper uninstaller =="
+BIN_DIR="/usr/bin"
+LIB_DIR="/usr/lib/i3-wallpaper-rofi"
 
-sudo rm -f /usr/local/bin/wallpaper
-sudo rm -f /usr/local/bin/wallpaper-menu
-sudo rm -f /usr/local/bin/wallpaper-menu-run
-sudo rm -f /usr/local/bin/wallpaper-scan
-sudo rm -f /usr/local/bin/update-lightdm-wallpaper
+CONFIG_DIR="$HOME/.config/i3-wallpaper-rofi"
+STATE_DIR="$HOME/.local/state/i3-wallpaper-rofi"
+DATA_DIR="$HOME/.local/share/i3-wallpaper-rofi"
+
+APP_DIR="$HOME/.local/share/applications"
+AUTOSTART_DIR="$HOME/.config/autostart"
+
+SUDOERS_FILE="/etc/sudoers.d/i3-wallpaper-rofi"
+
+echo "== i3-wallpaper-rofi uninstaller =="
+
+echo "[1/4] Removing executables..."
+
+sudo rm -f \
+    "$BIN_DIR/wallpaper" \
+    "$BIN_DIR/wallpaper-menu-run"
+
+echo "[2/4] Removing application files..."
+
+sudo rm -rf "$LIB_DIR"
 
 rm -f \
-    "$HOME/.local/share/applications/wallpaper.desktop"
+    "$APP_DIR/wallpaper.desktop" \
+    "$AUTOSTART_DIR/wallpaper-autostart.desktop"
 
-rm -f \
-    "$HOME/.config/autostart/wallpaper-autostart.desktop"
+echo "[3/4] Removing sudo rule..."
 
-sudo rm -f /etc/sudoers.d/wallpaper
+sudo rm -f "$SUDOERS_FILE"
 
-echo
-echo "Configuration was NOT removed."
+echo "[4/4] Removing runtime data..."
 
-echo
-echo "If you want to remove it too:"
-echo "rm -rf ~/.config/wallpaper"
+rm -rf "$STATE_DIR"
+rm -rf "$DATA_DIR"
 
 echo
-echo "Done."
+echo "Configuration was NOT removed:"
+echo "  $CONFIG_DIR"
+echo
+echo "To remove the configuration manually:"
+echo "  rm -rf \"$CONFIG_DIR\""
+echo
+echo "i3-wallpaper-rofi has been uninstalled."

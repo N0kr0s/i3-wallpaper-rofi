@@ -1,9 +1,22 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MENU="/usr/lib/i3-wallpaper-rofi/wallpaper-menu"
+WALLPAPER="/usr/bin/wallpaper"
 
-choice=$("$SCRIPT_DIR/wallpaper-menu")
+if [ ! -x "$MENU" ]; then
+    echo "Wallpaper menu not found:"
+    echo "$MENU"
+    exit 1
+fi
 
-[ -z "$choice" ] && exit
+if [ ! -x "$WALLPAPER" ]; then
+    echo "Wallpaper command not found:"
+    echo "$WALLPAPER"
+    exit 1
+fi
 
-"$SCRIPT_DIR/wallpaper" "$choice"
+choice=$("$MENU")
+
+[ -z "$choice" ] && exit 0
+
+exec "$WALLPAPER" "$choice"

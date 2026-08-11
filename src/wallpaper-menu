@@ -2,7 +2,7 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-CONFIG="$HOME/.config/wallpaper/wallpaper.conf"
+CONFIG="$HOME/.config/i3-wallpaper-rofi/config"
 
 SCAN="$SCRIPT_DIR/wallpaper-scan"
 

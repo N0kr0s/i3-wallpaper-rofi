@@ -1,12 +1,12 @@
-# ~/.config/wallpaper/wallpaper.conf
+# i3-wallpaper-rofi configuration
 
 IMAGE_DIRS=(
-"$HOME/Pictures/wallpapers"
+    "$HOME/Pictures/wallpapers"
 )
 
 VIDEO_DIRS=(
-"$HOME/Video"
-"$HOME/Video/wallpapers"
+    "$HOME/Video"
+    "$HOME/Video/wallpapers"
 )
 
 VIDEO_BACKEND="/usr/lib/i3-wallpaper-rofi/video-wallpaper"
