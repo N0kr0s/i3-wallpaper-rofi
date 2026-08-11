@@ -1,12 +1,12 @@
 # ~/.config/wallpaper/wallpaper.conf
 
 IMAGE_DIRS=(
-"$HOME/photos/wallpapers"
+"$HOME/Pictures/wallpapers"
 )
 
 VIDEO_DIRS=(
-"$HOME/video"
-"$HOME/video/wallpapers"
+"$HOME/Video"
+"$HOME/Video/wallpapers"
 )
 
 VIDEO_SCRIPT="/usr/local/lib/i3-wallpaper-rofi/setup.sh"
